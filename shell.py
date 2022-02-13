@@ -31,6 +31,7 @@ def parse_args(args: list):
             print("-ltest, --lib-test          Tests the library")
             print("-s, --surpressed            Don't print debug informations")
             print("--strict                    Start in strict mode")
+            print("Loscript Interpreter ...... v1.1")
             sys.exit(0)
         if(el=="-ltest")|(el=="--lib-test"):
             try:
@@ -51,7 +52,7 @@ def parse_args(args: list):
         if(el=="-s")|(el=="--surpressed"):
             out=False
         if(el=="-v") | (el=="--version"):
-            if(out): print("v1.0.0")
+            if(out): print("v1.1")
             sys.exit(0)
         if(el=="--strict"):
             strict=True

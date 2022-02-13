@@ -1,0 +1,134 @@
+#lolscript.lsc.lang
+
+#-.print
+fun print(str) -> PRINT(str)
+
+#-.input
+fun input()
+    return INPUT()
+end
+
+#-.answer
+fun answer(quest)
+    print(quest)
+    return input()
+end
+
+fun append(list, el) -> APPEND(list, el)
+
+fun pop(list, num) -> POP(list, num)
+
+fun extend(list, lst) -> EXTEND(list, lst)
+
+fun len(list) -> LEN(list)
+
+fun join(elements, separator)
+	var result = ""
+	var len = LEN(elements)
+
+	for i = 0 to len then
+		var result = result + elements/i
+		if i != len - 1 then var result = result + separator
+	end
+
+	return result
+end
+
+fun map(elements, func)
+	var new_elements = []
+
+	for i = 0 to LEN(elements) then
+		APPEND(new_elements, func(elements/i))
+	end
+
+	return new_elements
+end
+
+fun input_int() -> INPUT_INT()
+
+#-.clear
+fun clear() -> CLEAR()
+
+#-.delete
+fun delete(reason)
+    clear()
+    print("All was deleted: " + reason)
+end
+
+fun run(file) -> RUN(file)
+
+
+
+var null = NULL
+var Null = NULL
+var True = "true"
+var true = "true"
+
+#-.isFunction
+fun isFunction(obj)
+    return IS_FUN(obj)
+end
+
+#-.isFunc
+fun isFunc(obj)
+    return IS_FUN(obj)
+end
+
+#-.isStr
+fun isStr(obj)
+    return IS_STR(obj)
+end
+
+#-.isNum
+fun isNum(obj)
+    return IS_NUM(obj)
+end
+
+#-.isLs
+fun isLs(obj)
+    return IS_LIST(obj)
+end
+
+#-.isString
+fun isString(obj)
+    return IS_STR(obj)
+end
+
+#-.isNumber
+fun isNumber(obj)
+    return IS_NUM(obj)
+end
+
+#-.isList
+fun isList(obj)
+    return IS_LIST(obj)
+end
+
+#-.echo
+fun echo(msg) -> print(msg)
+
+fun print_ret(msg) -> PRINT_RET(msg)
+
+fun log(msg) -> print(msg)
+
+fun warn(msg) -> WARN(msg)
+
+fun error(msg) -> ERROR(msg)
+
+fun number(str) -> NUMBER(str)
+
+fun string(str) -> STRING(str)
+
+fun str(string) -> STRING(string)
+
+fun typeof(object)
+    if isList(object) then
+        return "list"
+    elif isNumber(object) then
+        return "number"
+    elif isFunc(object) then
+        return "function"
+    else
+        return "identifier"
+    end
+end

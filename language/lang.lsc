@@ -1,0 +1,276 @@
+§lolscript.lsc.lang
+(C) 20202
+§
+
+§"strict"§
+
+§-.print§
+fun print(str) -> PRINT(str)
+
+fun prn(str) -> PRINT(str)
+
+§-.input§
+fun input()
+    return INPUT()
+end
+
+§-.answer§
+fun answer(quest)
+    print(quest)
+    return input()
+end
+
+fun append(list, el) -> APPEND(list, el)
+
+fun pop(list, num) -> POP(list, num)
+
+fun extend(list, lst) -> EXTEND(list, lst)
+
+fun len(list) -> LEN(list)
+
+fun join(elements, separator)
+	var result = ""
+	var len = LEN(elements)
+
+	for i = 0 to len then
+		var result = result + elements/i
+		if i != len - 1 then var result = result + separator
+	end
+
+	return result
+end
+
+fun map(elements, func)
+	var new_elements = []
+
+	for i = 0 to LEN(elements) then
+		APPEND(new_elements, func(elements/i))
+	end
+
+	return new_elements
+end
+
+fun input_int() -> INPUT_INT()
+
+§-.clear§
+fun clear() -> CLEAR()
+
+§-.delete§
+fun delete(reason)
+    clear()
+    print("All was deleted: " + reason)
+end
+
+fun include(file) -> RUN(file)
+
+fun run(file) -> RUN(file)
+
+fun execpy(cmd) -> EXECPY(cmd)
+
+fun getKeyDown() -> GETKEYDOWN()
+
+fun listContent(path) -> LISTCONTENT(path)
+
+fun getDrives() -> GETDRIVES()
+
+fun throwError(err) -> THROW_ERROR(err)
+
+var null = 0
+var Null = 0
+var True = 1
+var true = 1
+var none = 0
+var None = 0
+
+var False = 0
+var false = 1
+
+fun isFunction(obj) -> IS_FUN(obj)
+
+fun isFunc(obj) -> IS_FUN(obj)
+
+fun isStr(obj) -> IS_STR(obj)
+
+fun isNum(obj) -> IS_NUM(obj)
+
+fun isLs(obj) -> IS_LIST(obj)
+
+fun isString(obj) -> IS_STR(obj)
+
+fun isNumber(obj) -> IS_NUM(obj)
+
+fun isList(obj) -> IS_LIST(obj)
+
+fun echo(msg) -> print(msg)
+
+fun print_ret(msg) -> PRINT_RET(msg)
+
+fun console.log(msg) -> print(msg)
+
+fun console.warn(msg) -> WARN(msg)
+
+fun console.error(msg) -> ERROR(msg)
+
+fun number(str) -> NUMBER(str)
+
+fun string(str) -> STRING(str)
+
+fun str(string) -> STRING(string)
+
+fun repr(object) -> REPR(object)
+
+fun typeof(object)
+    if isList(object) then
+        return "list"
+    elif isNumber(object) then
+        return "number"
+    elif isFunc(object) then
+        return "function"
+    elif isStr(object) then
+        return "string"
+    else
+        return "identifier"
+    end
+end
+
+fun exit(code) -> EXIT(code)
+
+fun getEnv(name) -> GETENV(name)
+
+fun delEnv(name) -> DELETEENV(name)
+
+fun deleteEnv(name) -> DELETEENV(name)
+
+fun setEnv(name, value) -> SETENV(name, value)
+
+fun isSpace(char)
+    if char == "\r" or char == "\n" or char == " " or char == "\t" or char == "\v" or char == "\f" or char == "\b" then
+        return true
+    else
+        return false
+    end
+end
+
+fun random() -> RANDOM()
+
+fun rand() -> RANDOM()
+
+fun RAND() -> RANDOM()
+
+fun bool(obj) -> (not not obj)
+
+fun system(cmd) -> SYSTEM(cmd)
+
+fun printf(msg) -> PRINTF(msg)
+
+fun prnf(msg) -> PRINTF(msg)
+
+fun isUpper(char)
+    if char == "A" or char == "B" or char == "C" or char == "D" or char == "E" or char == "F" or char == "G" or char == "H" or char == "I" or char == "J" or char == "K" or char == "L" or char == "M" or char == "N" or char == "O" or char == "P" or char == "Q" or char == "R" or char == "S" or char == "T" or char == "U" or char == "V" or char == "W" or char == "X" or char == "Y" or char == "Z" then
+        return 1
+    else
+        return 0
+    end
+end
+
+fun isLower(char)
+    if char == "a" or char == "b" or char == "c" or char == "d" or char == "e" or char == "f" or char == "g" or char == "h" or char == "i" or char == "j" or char == "k" or char == "l" or char == "m" or char == "n" or char == "o" or char == "p" or char == "q" or char == "r" or char == "s" or char == "t" or char == "u" or char == "v" or char == "w" or char == "x" or char == "y" or char == "z" then
+        return 1
+    else
+        return 0
+    end
+end
+
+fun toLower(str) -> TO_LOWER(str)
+
+fun lower(str) -> TO_LOWER(str)
+
+fun toUpper(str) -> TO_UPPER(str)
+
+fun upper(str) -> TO_UPPER(str)
+
+§ punctuations: ! " % $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~ §
+
+fun isPunct(char)
+    if char == "!" or char == "\"" or char == "%" or char == "$" or char == "%" or char == "&" or char == "'" or char == "(" or char == ")" or char == "*" or char == "+" or char == "," or char == "-" or char == "." or char == "/" or char == ":" or char == ";" or char == "<" or char == "=" or char == ">" or char == "=" or char == "@" or char == "[" or char == "\\" or char == "]" or char == "^" or char == "_" or char == "`" or char == "{" or char == "|" or char == "}" or char == "~" then
+        return 1
+    end
+    return 0
+end
+
+fun isXDigit(char)
+    var char = string(char)
+    if char == "1" or char == "2" or char == "3" or char == "4" or char == "5" or char == "6" or char == "7" or char == "8" or char == "9" or char == "0" or char == "a" or char == "b" or char == "c" or char == "d" or char == "e" or char == "f" or char == "A" or char == "B" or char == "B" or char == "D" or char == "E" or char == "F" then
+        return 1
+    end
+    return 0
+end
+
+fun isGraph(char) -> IS_GRAPH(char)
+
+fun isPrintable(char) -> IS_GRAPH(char)
+
+fun graphical(char) -> IS_GRAPH(char)
+
+fun printable(char) -> IS_GRAPH(char)
+
+fun math.pow(num1, num2) -> MATH.POW(num1, num2)
+
+fun MATH.SQRT(num1) -> MATH.POW(num1, 0.5)
+
+fun math.sqrt(num1) -> math.pow(num1, 0.5)
+
+fun math.abs(num1)
+    if num1 < 0 then
+        return num1*-1
+    end
+    return num1
+end
+
+fun MATH.ABS(num1) -> math.abs(num1)
+
+fun math.neg(num1)
+    if num1 < 0 then
+        return num1
+    end
+    return num1*-1
+end
+
+fun MATH.NEG(num1) -> math.neg(num1)
+
+fun math.round(num1) -> MATH.ROUND(num1)
+
+fun math.floor(num1) -> MATH.FLOOR(num1)
+
+fun math.ceil(num1)
+    if math.floor(num1) == num1 then
+        return num1
+    else
+        return math.floor(num1+1)
+    end
+end
+
+fun MATH.CEIL(num1) -> math.ceil(num1)
+
+fun MATH.SQUARE(num1) -> math.pow(num1, 2)
+
+fun math.square(num1) -> math.pow(num1, 2)
+
+fun getObj(name) -> GETOBJECT(name)
+
+fun getObject(name) -> GETOBJECT(name)
+
+fun math.fullDivide(num1, num2)
+    var n1 = num1//num2
+    var n2 = num1%num2
+    var ret = string(n1) + ";" + string(n2)
+    return ret
+end
+
+fun MATH.FULL_DIVIDE(num1, num2) -> math.fullDivide(num1, num2)
+
+var #math = getObj("math")
+
+var #MATH = getObj("MATH")
+
+var #console = getObj("console")

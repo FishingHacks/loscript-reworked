@@ -3,6 +3,7 @@
 A little language i worked on
 
 Move `/lsc.1.gz` to `/usr/share/man/man1/lsc.1.gz` (root permissions required; Read-Only folder) to get `man lsc`
+Alternatively you can also use man <your-installation-path>/lsc.1.gz
 
 `shell.py` is the main program, it will give you the interpreter-interface
 `/lanugage/lang.lsc` is supposed to be executed silently at first in strict-mode

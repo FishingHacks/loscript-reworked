@@ -2,6 +2,8 @@
 
 A little language i worked on
 
+Credit for the start: https://www.youtube.com/playlist?list=PLZQftyCk7_SdoVexSmwy_tBgs7P0b97yD
+
 Move `/lsc.1.gz` to `/usr/share/man/man1/lsc.1.gz` (root permissions required; Read-Only folder) to get `man lsc`
 Alternatively you can also use man <your-installation-path>/lsc.1.gz
 

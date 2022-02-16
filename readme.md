@@ -2,6 +2,8 @@
 
 A little language i worked on
 
+For running, put the files in $HOME/programming-language/loscript and add an alias for run_shell.py. For fish: `alias lsc "python3 $HOME/programming-language/loscript/run_shell.py"`
+
 Credit for the start: https://www.youtube.com/playlist?list=PLZQftyCk7_SdoVexSmwy_tBgs7P0b97yD
 
 Move `/lsc.1.gz` to `/usr/share/man/man1/lsc.1.gz` (root permissions required; Read-Only folder) to get `man lsc`

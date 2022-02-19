@@ -4,17 +4,17 @@
 
 §"strict"§
 
-§-.print§
+} -.print
 fun print(str) -> PRINT(str)
 
 fun prn(str) -> PRINT(str)
 
-§-.input§
+} -.input
 fun input()
     return INPUT()
 end
 
-§-.answer§
+} -.answer
 fun answer(quest)
     print(quest)
     return input()
@@ -52,10 +52,10 @@ end
 
 fun input_int() -> INPUT_INT()
 
-§-.clear§
+} -.clear
 fun clear() -> CLEAR()
 
-§-.delete§
+} -.delete
 fun delete(reason)
     clear()
     print("All was deleted: " + reason)

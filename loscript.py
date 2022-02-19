@@ -20,7 +20,7 @@ import math
 #######################################
 
 DIGITS = '0123456789'
-LETTERS = string.ascii_letters + ".#"
+LETTERS = string.ascii_letters + ".#$"
 LETTERS_DIGITS = LETTERS + DIGITS
 
 #######################################
@@ -203,6 +203,8 @@ class Lexer:
         self.advance()
       elif self.current_char == '§':
         self.skip_muiltiline_comment('§')
+      elif self.current_char == '}':
+        self.skip_comment()
       elif self.current_char in ';\n':
         tokens.append(Token(TT_NEWLINE, pos_start=self.pos))
         self.advance()
@@ -290,6 +292,8 @@ class Lexer:
     string = ''
     pos_start = self.pos.copy()
     escape_character = False
+    env_start = False
+    env_name=""
     self.advance()
 
     escape_characters = {
@@ -300,22 +304,35 @@ class Lexer:
       '\\': "\\",
       'f': '\f',
       'v': '\v',
-      '"': '"'
+      '"': '"',
+      '$': '$'
     }
 
     while self.current_char != None and (self.current_char != '"'or escape_character):
       if escape_character:
         if escape_characters.get(self.current_char) != None:
           string += escape_characters.get(self.current_char, self.current_char)
-        else:
-          string += "\\" + self.current_char
         escape_character = False
+      elif env_start:
+        if self.current_char.isspace():
+          if os.getenv(env_name):
+            string += os.getenv(env_name)
+          string += self.current_char
+          env_start=False
+        else:
+          env_name += self.current_char
       else:
         if self.current_char == '\\':
           escape_character = True
+        elif self.current_char == '$':
+          env_start = True
+          env_name=""
         else:
           string += self.current_char
       self.advance()
+    if env_start:
+      if os.getenv(env_name):
+        string += os.getenv(env_name)
     
     self.advance()
     return Token(TT_STRING, string, pos_start, self.pos)
@@ -2346,6 +2363,10 @@ class Interpreter:
     res = RTResult()
     var_name = node.var_name_tok.value
     value = context.symbol_table.get(var_name)
+    if not value:
+      if var_name.startswith("$"):
+        if(os.getenv(var_name[1:])):
+          value=String(os.getenv(var_name[1:]))
 
     if not value:
       return res.failure(RTError(

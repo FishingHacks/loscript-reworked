@@ -75,15 +75,15 @@ fun getDrives() -> GETDRIVES()
 
 fun throwError(err) -> THROW_ERROR(err)
 
-var null = 0
-var Null = 0
-var True = 1
-var true = 1
-var none = 0
-var None = 0
+var null = NULL
+var Null = NULL
+var True = TRUE
+var true = TRUE
+var none = NULL
+var None = NULL
 
-var False = 0
-var false = 1
+var False = FALSE
+var false = FALSE
 
 fun isFunction(obj) -> IS_FUN(obj)
 
@@ -274,3 +274,11 @@ var #math = getObj("math")
 var #MATH = getObj("MATH")
 
 var #console = getObj("console")
+
+fun exists(name) -> EXISTS(name)
+
+fun equals(val) -> EQUALS(val)
+
+fun getStruct() -> GET_STRUCT()
+
+fun addChild(struct, name, value) -> ADD_CHILD(struct, name, value)

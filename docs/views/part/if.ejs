@@ -1,0 +1,23 @@
+<%- include('../header.ejs') %>
+<p>
+If statements follow the following rules:
+<br />&lt;TOKEN:IF&gt; [STATEMENT] &lt;TOKEN:THEN&gt;
+<br />...commands to execute
+<br />(
+<br />  ...[&lt;TOKEN:ELSE_IF&gt; [STATEMENT] &lt;TOKEN:THEN&gt;
+<br />  ...commands to execute]
+<br />)
+<br />(
+<br />    [&lt;TOKEN:ELSE&gt;
+<br />    ...commands to execute]{0,1}
+<br />)
+<br />&lt;TOKEN:END&gt;
+<br />
+<br />Tokens:
+<br />IF: Literal['if']
+<br />THEN: Literal['then']
+<br />ELSE_IF: Literal['elseif']
+<br />ELSE: Literal['else']
+<br />END: Literal['end']
+</p>
+<%- include('../footer.ejs') %>

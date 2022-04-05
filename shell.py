@@ -16,6 +16,8 @@ code = ""
 for line in lines:
     code += line.strip() + "\n"
 result, error = basic.run("Loads functions", code, True)
+if error:
+    print(error.as_string())
 
 def parse_args(args: list):
     global out

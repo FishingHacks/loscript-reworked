@@ -175,7 +175,7 @@ KEYWORDS = [
     'return',
     'continue',
     'break',
-    'require',
+    'import',
 ]
 
 
@@ -494,7 +494,7 @@ class VarAccessNode:
         self.pos_end = self.var_name_tok.pos_end
 
 
-class requireNode:
+class importNode:
 
     def __init__(self, var_name_tok):
         self.pos_start = var_name_tok.pos_start
@@ -704,7 +704,7 @@ class Parser:
             return res.failure(
                 InvalidSyntaxError(
                     self.current_tok.pos_start, self.current_tok.pos_end,
-                    "Token cannot appear after previous tokens"))
+                    "Token " + self.current_tok.type + "(Value: " + self.current_tok.value +") cannot appear after previous tokens"))
         return res
 
     ###################################
@@ -965,7 +965,7 @@ class Parser:
             if res.error: return res
             return res.success(while_expr)
 
-        elif tok.matches(TT_KEYWORD, 'require'):
+        elif tok.matches(TT_KEYWORD, 'import'):
             res.register_advancement()
             self.advance()
             if self.current_tok.type == 'STRING':
@@ -973,7 +973,7 @@ class Parser:
                 while (self.current_tok.type != TT_EOF):
                     self.advance()
                     res.register_advancement()
-                return res.success(node=requireNode(self.current_tok))
+                return res.success(node=importNode(self.current_tok))
             else:
                 return res.failure(
                     InvalidSyntaxError(
@@ -1760,7 +1760,7 @@ class Number(Value):
 
 Number.null = Null()
 Number.false = Boolean(False)
-Number.true = Boolean(True)
+Boolean.TRUE = Boolean(True)
 Number.math_PI = Number(math.pi)
 Number.pi = Number(math.pi)
 
@@ -1773,13 +1773,13 @@ class String(Value):
 
     def get_comparison_ne(self, other):
         if isinstance(other, String):
-            return Number.true if self.value != other.value else Number.false, None
+            return Boolean.TRUE if self.value != other.value else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
     def get_comparison_eq(self, other):
         if isinstance(other, String):
-            return Number.true if self.value == other.value else Number.false, None
+            return Boolean.TRUE if self.value == other.value else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
@@ -1825,13 +1825,13 @@ class List(Value):
 
     def get_comparison_eq(self, other):
         if isinstance(other, List):
-            return Number.true if self.value == other.value else Number.false, None
+            return Boolean.TRUE if self.value == other.value else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
     def get_comparison_ne(self, other):
         if isinstance(other, List):
-            return Number.true if self.value != other.value else Number.false, None
+            return Boolean.TRUE if self.value != other.value else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
@@ -1878,7 +1878,7 @@ class List(Value):
         return len(self.value) > 0
 
     def notted(self):
-        return Number.false if len(self.value) > 0 else Number.true, None
+        return Number.false if len(self.value) > 0 else Boolean.TRUE, None
 
     def copy(self):
         copy = List(self.elements)
@@ -1909,7 +1909,7 @@ class Object(Value):
         return True
 
     def notted(self):
-        return Number.true, None
+        return Boolean.TRUE, None
 
     def __repr__(self) -> str:
         return f'<Object {self.name}>'
@@ -1980,13 +1980,13 @@ class BaseFunction(Value):
 
     def get_comparison_eq(self, other):
         if isinstance(other, BaseFunction):
-            return Number.true if self.name == other.name else Number.false, None
+            return Boolean.TRUE if self.name == other.name else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
     def get_comparison_ne(self, other):
         if isinstance(other, BaseFunction):
-            return Number.true if self.name != other.name else Number.false, None
+            return Boolean.TRUE if self.name != other.name else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
@@ -2030,13 +2030,13 @@ class Function(BaseFunction):
 
     def get_comparison_eq(self, other):
         if isinstance(other, BaseFunction):
-            return Number.true if self.name == other.name else Number.false, None
+            return Boolean.TRUE if self.name == other.name else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
     def get_comparison_ne(self, other):
         if isinstance(other, BaseFunction):
-            return Number.true if self.name != other.name else Number.false, None
+            return Boolean.TRUE if self.name != other.name else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
@@ -2135,13 +2135,13 @@ class BuiltInFunction(BaseFunction):
 
     def get_comparison_eq(self, other):
         if isinstance(other, BaseFunction):
-            return Number.true if self.name == other.name else Number.false, None
+            return Boolean.TRUE if self.name == other.name else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
     def get_comparison_ne(self, other):
         if isinstance(other, BaseFunction):
-            return Number.true if self.name != other.name else Number.false, None
+            return Boolean.TRUE if self.name != other.name else Number.false, None
         else:
             return None, Value.illegal_operation(self, other)
 
@@ -2183,6 +2183,11 @@ class BuiltInFunction(BaseFunction):
                     "an error occured during typechecking", exec_ctx))
 
     execute_addChild.arg_names = ['struct', 'name', 'value']
+
+    def execute_require(self, exec_ctx):
+        run_lsc_script(exec_ctx.symbol_table.get("path"))
+        return RTResult().success(Boolean.TRUE)
+    execute_require.arg_names = ['path']
 
     def execute_exists(self, exec_ctx):
         return RTResult().success(
@@ -2247,7 +2252,7 @@ class BuiltInFunction(BaseFunction):
 
     def execute_isGraph(self, exec_ctx):
         chars = "! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~"
-        return Number.true if str(
+        return Boolean.TRUE if str(
             exec_ctx.symbol_table.get("value")) in chars else Number.false
 
     execute_isGraph.arg_names = ["value"]
@@ -2427,13 +2432,13 @@ class BuiltInFunction(BaseFunction):
     def execute_setEnv(self, exec_ctx):
         os.putenv(str(exec_ctx.symbol_table.get("name")),
                   str(exec_ctx.symbol_table.get("value").value))
-        return RTResult().success(Number.true)
+        return RTResult().success(Boolean.TRUE)
 
     execute_setEnv.arg_names = ["name", "value"]
 
     def execute_deleteEnv(self, exec_ctx):
         os.unsetenv(str(exec_ctx.symbol_table.get("name")))
-        return RTResult().success(Number.true)
+        return RTResult().success(Boolean.TRUE)
 
     execute_deleteEnv.arg_names = ['name']
 
@@ -2463,25 +2468,25 @@ class BuiltInFunction(BaseFunction):
 
     def execute_is_number(self, exec_ctx):
         is_number = isinstance(exec_ctx.symbol_table.get("value"), Number)
-        return RTResult().success(Number.true if is_number else Number.false)
+        return RTResult().success(Boolean.TRUE if is_number else Number.false)
 
     execute_is_number.arg_names = ["value"]
 
     def execute_is_string(self, exec_ctx):
         is_string = isinstance(exec_ctx.symbol_table.get("value"), String)
-        return RTResult().success(Number.true if is_string else Number.false)
+        return RTResult().success(Boolean.TRUE if is_string else Number.false)
 
     execute_is_string.arg_names = ["value"]
 
     def execute_is_list(self, exec_ctx):
         is_list = isinstance(exec_ctx.symbol_table.get("value"), List)
-        return RTResult().success(Number.true if is_list else Number.false)
+        return RTResult().success(Boolean.TRUE if is_list else Number.false)
 
     execute_is_list.arg_names = ["value"]
 
     def execute_is_function(self, exec_ctx):
         is_func = isinstance(exec_ctx.symbol_table.get("value"), BaseFunction)
-        return RTResult().success(Number.true if is_func else Number.false)
+        return RTResult().success(Boolean.TRUE if is_func else Number.false)
 
     execute_is_function.arg_names = ["value"]
 
@@ -2633,6 +2638,7 @@ BuiltInFunction.getEnv = BuiltInFunction("getEnv")
 BuiltInFunction.setEnv = BuiltInFunction("setEnv")
 BuiltInFunction.getKeyDown = BuiltInFunction("gkd")
 BuiltInFunction.system = BuiltInFunction("system")
+BuiltInFunction.require = BuiltInFunction("require")
 
 #######################################
 # CONTEXT
@@ -2652,24 +2658,46 @@ class Context:
 # SYMBOL TABLE
 #######################################
 
+class SymbolTableNode:
+    def __init__(self, value, canChange=True):
+        self.value = value
+        self.canChange=canChange
+    
+    def getValue(self):
+        return self.value
+    
+    def setValue(self, newValue):
+        if not self.canChange:
+            return
+        self.value=newValue
 
 class SymbolTable:
 
     def __init__(self, parent=None):
-        self.symbols = {}
+        self.symbolsa = {}
         self.parent = parent
 
     def get(self, name):
-        value = self.symbols.get(name, None)
+        node = self.getNode(name)
+        if node==None:
+            return None
+        return node.getValue()
+    
+    def getNode(self, name) -> SymbolTableNode:
+        value = self.symbolsa.get(name, None)
         if value == None and self.parent:
-            return self.parent.get(name)
+            return self.parent.getNode(name)
         return value
 
     def set(self, name, value):
-        self.symbols[name] = value
+        node = self.getNode(name)
+        if node==None:
+            self.symbolsa[name]=SymbolTableNode(value, True)
+        else:
+            node.setValue(value)
 
     def remove(self, name):
-        del self.symbols[name]
+        del self.symbolsa[name]
 
 
 #######################################
@@ -2699,8 +2727,8 @@ class Interpreter:
             String(node.tok.value).set_context(context).set_pos(
                 node.pos_start, node.pos_end))
 
-    def visit_requireNode(self, node, context):
-        return RTResult().success(Number.true)
+    def visit_importNode(self, node, context):
+        return RTResult().success(Boolean.TRUE)
 
     def visit_ListNode(self, node, context):
         res = RTResult()
@@ -3041,6 +3069,7 @@ global_symbol_table.set("SETENV", BuiltInFunction.setEnv)
 global_symbol_table.set("DELETEENV", BuiltInFunction.delEnv)
 global_symbol_table.set("GETSYSTEMINFOS", BuiltInFunction.getSystemInfos)
 global_symbol_table.set("SYSTEM", BuiltInFunction.system)
+global_symbol_table.set("REQUIRE", BuiltInFunction.require)
 
 
 def run(fn, text, strict_mode=False):

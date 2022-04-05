@@ -3075,8 +3075,8 @@ global_symbol_table.set("REQUIRE", BuiltInFunction.require)
 def run(fn, text, strict_mode=False, args=[]):
     global STRICT_MODE
     STRICT_MODE = strict_mode
-    global_symbol_table.set("ARGS", args)
-    global_symbol_table.set("args", args)
+    global_symbol_table.set("ARGS", List(args))
+    global_symbol_table.set("args", List(args))
     # Generate tokens
     lexer = Lexer(fn, text)
     tokens, error = lexer.make_tokens()

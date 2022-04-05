@@ -27,3 +27,5 @@ PRINT("Greetings universe!")
 for i = 0 to 5 then
 	PRINT(join(map(["l", "sp"], oopify), ", "))
 end
+
+print(args)

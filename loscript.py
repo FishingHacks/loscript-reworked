@@ -1915,15 +1915,15 @@ class Object(Value):
         return f'<Object {self.name}>'
 
     def __str__(self) -> str:
-        symbols: dict = self.context.symbol_table.symbols
-        symbols.update(global_symbol_table.symbols)
+        symbols: dict = self.context.symbol_table.symbolsa
+        symbols.update(global_symbol_table.symbolsa)
         keys = list(symbols.keys())
         vals = list(symbols.values())
         our_symbols = {}
         for k in keys:
             if (k.startswith(self.name.value) & (k != self.name.value)):
                 name = k.replace(self.name.value + ".", "")
-                our_symbols[name] = vals[keys.index(k)]
+                our_symbols[name] = vals[keys.index(k)].getValue()
         return our_symbols.__str__()
 
 

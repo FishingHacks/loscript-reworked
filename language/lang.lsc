@@ -111,6 +111,8 @@ fun console.warn(msg) -> WARN(msg)
 
 fun console.error(msg) -> ERROR(msg)
 
+fun console.clear() -> clear()
+
 fun number(str) -> NUMBER(str)
 
 fun string(str) -> STRING(str)

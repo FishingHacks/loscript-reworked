@@ -1,0 +1,16 @@
+var scopetest=1
+
+fun b()
+var scopetest=2
+print(scopetest)
+end
+
+print(scopetest)
+b()
+print(scopetest)
+
+print(args)
+
+console.log("<color:cyan>hi<color:bold>Hi in Bold")
+
+import "programs/tp.lsc"

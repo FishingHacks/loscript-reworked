@@ -50,7 +50,7 @@ lines = file.readlines()
 code = ""
 for line in lines:
     code += line.strip() + "\n"
-result, error = basic.run(filepath.split("/")[-1], code, False)
+result, error = basic.run(filepath.split("/")[-1], code, False, args)
 if error:
     print(error.as_string())
 file.close()

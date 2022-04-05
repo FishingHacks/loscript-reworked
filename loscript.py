@@ -3072,9 +3072,11 @@ global_symbol_table.set("SYSTEM", BuiltInFunction.system)
 global_symbol_table.set("REQUIRE", BuiltInFunction.require)
 
 
-def run(fn, text, strict_mode=False):
+def run(fn, text, strict_mode=False, args=[]):
     global STRICT_MODE
     STRICT_MODE = strict_mode
+    global_symbol_table.set("ARGS", args)
+    global_symbol_table.set("args", args)
     # Generate tokens
     lexer = Lexer(fn, text)
     tokens, error = lexer.make_tokens()

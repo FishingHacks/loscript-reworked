@@ -281,8 +281,4 @@ fun exists(name) -> EXISTS(name)
 
 fun equals(val) -> EQUALS(val)
 
-fun getStruct() -> GET_STRUCT()
-
-fun addChild(struct, name, value) -> ADD_CHILD(struct, name, value)
-
 fun require(path) -> REQUIRE(path)

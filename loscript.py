@@ -1535,12 +1535,6 @@ class Value:
     def is_true(self):
         return False
 
-    def isChild(self, other=None) -> bool:
-        return False
-
-    def getChild(self, other):
-        return Null()
-
     def illegal_operation(self, other=None):
         if not other: other = self
         return RTError(self.pos_start, other.pos_end, 'Illegal operation',
@@ -1572,24 +1566,28 @@ class Boolean(Value):
         else:
             return None, Value.illegal_operation(self, other)
 
-    def isChild(self, other) -> bool:
-        if (isinstance(other, str)):
-            if (other == "strimg"):
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def getChild(self, other) -> bool:
-        if (other == "string"):
-            return String("true" if self.is_true() else "false")
-        else:
-            return Null()
-
     def copy(self):
         return Boolean(self.isTrue)
 
+class Undefined(Value):
+
+    def __init__(self):
+        super().__init__()
+
+    def is_true(self):
+        return False
+
+    def notted(self):
+        return Boolean(True), None
+
+    def __repr__(self) -> str:
+        return "undefined"
+
+    def __str__(self) -> str:
+        return "undefined"
+
+    def copy(self):
+        return Undefined()
 
 class Null(Value):
 
@@ -1731,17 +1729,6 @@ class Number(Value):
         return (Boolean(True) if self.value == 0 else
                 Boolean(False)).set_context(self.context), None
 
-    def isChild(self, other=None) -> bool:
-        if (isinstance(other, str)):
-            return (other == "squared")
-        return False
-
-    def getChild(self, other):
-        if (isinstance(other, str)):
-            if (other == "squared"):
-                return Number(self.value * self.value)
-        return Null()
-
     def copy(self):
         copy = Number(self.value)
         copy.set_pos(self.pos_start, self.pos_end)
@@ -1758,7 +1745,7 @@ class Number(Value):
         return "<Number:" + str(self.value).replace("inf", "Infinity") + ">"
 
 
-Number.null = Null()
+Number.null = Undefined()
 Number.false = Boolean(False)
 Boolean.TRUE = Boolean(True)
 Number.math_PI = Number(math.pi)
@@ -1954,7 +1941,7 @@ class BaseFunction(Value):
 
         if (len(arg_names) > len(args)) & (not STRICT_MODE):
             for i in range(len(arg_names) - len(args)):
-                args.append(Null())
+                args.append(Undefined())
 
         if len(args) < len(arg_names):
             return res.failure(
@@ -2051,60 +2038,6 @@ class Function(BaseFunction):
         return f"<function {self.name}>"
 
 
-class Struct(Value):
-
-    def __init__(self):
-        super().__init__()
-        self.children = {}
-
-    def addChild(self, name, value):
-        if (isinstance(name, str) & isinstance(value, Value)):
-            self.children[name] = value
-            return True
-        else:
-            return False
-
-    def remChild(self, name):
-        if (isinstance(name, str)):
-            self.children.pop(name)
-
-    def setChild(self, name, value):
-        if (isinstance(name, str) & isinstance(value, Value)):
-            if (self.children.get(name) == None):
-                return
-            self.children[name] = value
-
-    def isChild(self, other=None) -> bool:
-        if (isinstance(other, str)):
-            return (self.children.get(other) != None)
-
-    def getChild(self, other):
-        if (isinstance(other, str)):
-            if (self.children.get(other) == None):
-                return Null()
-            return self.children.get(other)
-
-    def copy(self):
-        ns = Struct()
-        for k in self.children.keys():
-            ns.addChild(k, self.children[k])
-        return ns
-
-    def __str__(self) -> str:
-        rpr = "{"
-        for k in self.children.keys():
-            rpr += k
-            rpr += ": "
-            rpr += self.children[k].__str__ if self.children[
-                k].__str__ else self.children[k].__repr__
-            rpr += ", "
-        rpr += "}"
-        return rpr
-
-    def __repr__(self):
-        return "<Struct:" + str(self.children.__len__()) + ">"
-
-
 class BuiltInFunction(BaseFunction):
 
     def __init__(self, name):
@@ -2160,29 +2093,6 @@ class BuiltInFunction(BaseFunction):
         return RTResult().success(Object(exec_ctx.symbol_table.get('name')))
 
     execute_getObject.arg_names = ['name']
-
-    def execute_getStruct(self, exec_ctx):
-        return RTResult().success(Struct())
-
-    execute_getStruct.arg_names = []
-
-    def execute_addChild(self, exec_ctx):
-        name = exec_ctx.symbol_table.get('name')
-        struct = exec_ctx.symbol_table.get('struct')
-        value = exec_ctx.symbol_table.get('value')
-
-        if (isinstance(struct, Struct) & isinstance(name, String)):
-            if struct.addChild(name.value, value):
-                return RTResult().success(Null())
-            else:
-                return RTResult().failure(
-                    RTError(self.pos_start, self.pos_end,
-                            "an error occured trying to add the child", exec_ctx))
-        return RTResult().failure(
-            RTError(self.pos_start, self.pos_end,
-                    "an error occured during typechecking", exec_ctx))
-
-    execute_addChild.arg_names = ['struct', 'name', 'value']
 
     def execute_require(self, exec_ctx):
         run_lsc_script(exec_ctx.symbol_table.get("path"))
@@ -2588,7 +2498,7 @@ class BuiltInFunction(BaseFunction):
                     f"Failed to finish executing script \"{fn}\"\n" +
                     error.as_string(), exec_ctx))
 
-        return RTResult().success(Null())
+        return RTResult().success(Undefined())
 
     execute_run.arg_names = ["fn"]
 
@@ -2623,8 +2533,6 @@ BuiltInFunction.mathRound = BuiltInFunction("mathRound")
 BuiltInFunction.mathFloor = BuiltInFunction("mathFloor")
 BuiltInFunction.getObject = BuiltInFunction("getObject")
 BuiltInFunction.exists = BuiltInFunction("exists")
-BuiltInFunction.getStruct = BuiltInFunction("getStruct")
-BuiltInFunction.addChild = BuiltInFunction("addChild")
 BuiltInFunction.equals = BuiltInFunction("equals")
 
 #please remove these lines, when you execute code, you dont trust
@@ -2757,7 +2665,7 @@ class Interpreter:
                     RTError(node.pos_start, node.pos_end,
                             f"'{var_name}' is not defined", context))
             else:
-                return res.success(Null())
+                return res.success(Undefined())
 
         value = value.copy().set_pos(node.pos_start,
                                      node.pos_end).set_context(context)
@@ -3015,6 +2923,8 @@ class Interpreter:
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("NULL", Null())
+global_symbol_table.set("undefined", Undefined())
+global_symbol_table.set("UNDEFINED", Undefined())
 global_symbol_table.set("INFINITY", Number(math.inf))
 global_symbol_table.set("-INFINITY", Number(-math.inf))
 global_symbol_table.set("Infinity", Number(math.inf))
@@ -3055,8 +2965,6 @@ global_symbol_table.set("MATH.ROUND", BuiltInFunction.mathRound)
 global_symbol_table.set("GETOBJECT", BuiltInFunction.getObject)
 global_symbol_table.set("EXISTS", BuiltInFunction.exists)
 global_symbol_table.set("EQUALS", BuiltInFunction.equals)
-global_symbol_table.set("GET_STRUCT", BuiltInFunction.getStruct)
-global_symbol_table.set("ADD_CHILD", BuiltInFunction.addChild)
 
 # Comment out for safe use
 global_symbol_table.set("EXECPY", BuiltInFunction.execpy)
@@ -3081,6 +2989,9 @@ def run(fn, text, strict_mode=False, args=[]):
     lexer = Lexer(fn, text)
     tokens, error = lexer.make_tokens()
     if error: return None, error
+    if len(tokens)<2:
+        res = RTResult()
+        return res.value, res.error
 
     # Generate AST
     parser = Parser(tokens)
